@@ -1,99 +1,61 @@
-import { useEffect, useState, useRef } from "react";
-import GlobalApi from "../Services/GlobalApi";
-import { HiChevronLeft, HiChevronRight } from "react-icons/hi";
+import React, { useEffect, useState } from 'react'
+import GlobalApi from '../Services/GlobalApi'
 
-function Hero() {
-    const [movieList, setMovieList] = useState([]);
-    const [currentIndex, setCurrentIndex] = useState(0);
-    const elementRef = useRef();
+const Hero = () => {
+  const [heroMovie, setHeroMovie] = useState(null)
 
-    useEffect(() => {
-        getTrendingMovies();
-    }, [])
+  useEffect(() => {
+    console.log('Hero component mounted')
+    getTrendingMovie()
+  }, [])
 
-    const getTrendingMovies = () => {
-        GlobalApi.getTrendingVideos.then(resp => {
-            setMovieList(resp.data.results);
-        })
+  const getTrendingMovie = async () => {
+    try {
+      console.log('Hero: Fetching trending movie...')
+      const response = await GlobalApi.getTrendingVideos
+      console.log('Hero: Trending movie response:', response)
+      if (response?.data?.results) {
+        setHeroMovie(response.data.results[0])
+        console.log('Hero: Set hero movie:', response.data.results[0])
+      }
+    } catch (error) {
+      console.error('Hero: Error fetching trending movie:', error)
     }
+  }
 
-    const nextSlide = () => {
-        setCurrentIndex((prevIndex) => 
-            prevIndex === movieList.length - 1 ? 0 : prevIndex + 1
-        );
-    }
-
-    const prevSlide = () => {
-        setCurrentIndex((prevIndex) => 
-            prevIndex === 0 ? movieList.length - 1 : prevIndex - 1
-        );
-    }
-
-    // Auto-slide every 5 seconds
-    useEffect(() => {
-        const interval = setInterval(() => {
-            nextSlide();
-        }, 5000);
-        return () => clearInterval(interval);
-    }, [currentIndex, movieList.length]);
-
+  if (!heroMovie) {
+    console.log('Hero: No hero movie data yet')
     return (
-        <div className='relative h-[85vh] w-full overflow-hidden'>
-            <div className='absolute top-0 left-0 w-full h-full transition-transform duration-500 ease-in-out'>
-                <img 
-                    src={`https://image.tmdb.org/t/p/original${movieList[currentIndex]?.backdrop_path}`}
-                    className='w-full h-full object-cover'
-                />
-                <div className='absolute top-0 left-0 w-full h-full bg-black/40'></div>
-            </div>
-            
-            {/* Navigation Arrows */}
-            <button 
-                onClick={prevSlide}
-                className='absolute left-4 top-1/2 transform -translate-y-1/2 bg-black/50 hover:bg-black/70 text-white p-2 rounded-full transition-all duration-200 z-10'
-            >
-                <HiChevronLeft className='text-2xl' />
-            </button>
-            <button 
-                onClick={nextSlide}
-                className='absolute right-4 top-1/2 transform -translate-y-1/2 bg-black/50 hover:bg-black/70 text-white p-2 rounded-full transition-all duration-200 z-10'
-            >
-                <HiChevronRight className='text-2xl' />
-            </button>
-
-            {/* Content */}
-            <div className='absolute top-[20%] p-4 md:p-8 transition-all duration-500'>
-                <h1 className='text-3xl md:text-5xl font-bold'>{movieList[currentIndex]?.title}</h1>
-                <div className='flex gap-3 my-4'>
-                    <button className='bg-gray-500 text-white px-5 py-2 rounded-md hover:bg-gray-700 transition-all'>
-                        Play
-                    </button>
-                    <button className='border border-gray-500 text-white px-5 py-2 rounded-md hover:bg-gray-700 transition-all'>
-                        Watch Later
-                    </button>
-                </div>
-                <p className='text-gray-400 text-sm'>
-                    Released: {movieList[currentIndex]?.release_date}
-                </p>
-                <p className='w-full md:max-w-[70%] lg:max-w-[50%] xl:max-w-[35%] text-gray-200 my-4'>
-                    {movieList[currentIndex]?.overview}
-                </p>
-            </div>
-
-            {/* Dots Indicator */}
-            <div className='absolute bottom-4 left-1/2 transform -translate-x-1/2 flex gap-2 z-10'>
-                {movieList.slice(0, 5).map((_, index) => (
-                    <button
-                        key={index}
-                        onClick={() => setCurrentIndex(index)}
-                        className={`w-3 h-3 rounded-full transition-all duration-200 ${
-                            index === currentIndex ? 'bg-white' : 'bg-white/50'
-                        }`}
-                    />
-                ))}
-            </div>
-        </div>
+      <div className='relative h-[70vh] bg-black flex items-center justify-center'>
+        <div className='text-white text-2xl'>Loading...</div>
+      </div>
     )
+  }
+
+  console.log('Hero: Rendering with movie:', heroMovie)
+
+  return (
+    <div className='relative h-[70vh] bg-black'>
+      <div className='absolute inset-0 bg-gradient-to-r from-black via-transparent to-black z-10'></div>
+      <img 
+        src={`https://image.tmdb.org/t/p/original${heroMovie.backdrop_path}`}
+        alt={heroMovie.title || heroMovie.name}
+        className='w-full h-full object-cover'
+      />
+      <div className='absolute bottom-20 left-10 z-20 text-white max-w-2xl'>
+        <h1 className='text-5xl font-bold mb-4'>{heroMovie.title || heroMovie.name}</h1>
+        <p className='text-lg mb-4'>{heroMovie.overview}</p>
+        <div className='flex space-x-4'>
+          <button className='bg-white text-black px-8 py-3 rounded-lg font-semibold hover:bg-gray-200'>
+            Play
+          </button>
+          <button className='bg-gray-600 text-white px-8 py-3 rounded-lg font-semibold hover:bg-gray-700'>
+            More Info
+          </button>
+        </div>
+      </div>
+    </div>
+  )
 }
 
 export default Hero 

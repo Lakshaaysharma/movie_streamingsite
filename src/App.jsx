@@ -3,13 +3,8 @@ import GenreMovieList from './Components/GenreMovieList'
 import Header from './Components/Header'
 import Hero from './Components/Hero'
 import Footer from './Components/Footer'
-import { useEffect } from 'react'
 
 function App() {
-  useEffect(() => {
-    console.log('App component mounted successfully')
-  }, [])
-
   return (
     <div className='min-h-screen bg-black'>
       <Header />

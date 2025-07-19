@@ -1,7 +1,7 @@
 import { HiDotsVertical } from 'react-icons/hi';
 import { useState } from 'react';
 import { useEffect } from 'react';
-import { getIcons } from '../utils/icons';
+import { getIcons } from '../utils/icons.jsx';
 import { FaGithub } from "react-icons/fa";
 
 function Header() {
@@ -20,7 +20,6 @@ function Header() {
     return (
         <div className='flex items-center justify-between p-5'>
             <div className='flex gap-8 items-center'>
-                {/* Pirate Logo */}
                 <div className='flex items-center gap-2'>
                     <div className='text-yellow-400 text-2xl md:text-3xl font-bold'>
                         🏴‍☠️ PIRATE STREAM
@@ -59,7 +58,7 @@ function Header() {
                     </div>
                 </div>
             </div>
-            <a href="https://github.com/KKurzawa" target="_blank" rel="noreferrer">
+            <a href="https://github.com" target="_blank" rel="noreferrer">
                 <FaGithub className='w-[25px] h-[25px] md:w-[40px] md:h-[40px] text-white' />
             </a>
         </div>
